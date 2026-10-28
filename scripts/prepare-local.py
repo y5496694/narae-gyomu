@@ -52,8 +52,6 @@ if not download.exists():urllib.request.urlretrieve('https://www.python.org/ftp/
 if not (python/'python.exe').exists():
     with zipfile.ZipFile(download) as archive:archive.extractall(python)
 (python/'python313._pth').write_bytes(('python313.zip\n.\nLib\nLib/site-packages\n'+
-    '../../packages/narae_hangul/1_나래엔진/narae-hangul/scripts/engine\n'+
-    '../../resources/app/packages/narae_hangul/1_나래엔진/narae-hangul/scripts/engine\n'+
     '../../packages/narae_gyomoo_portal/skills/wxs-cli/scripts\n'+
     '../../resources/app/packages/narae_gyomoo_portal/skills/wxs-cli/scripts\nimport site\n').encode('utf8'))
 # The upstream wrapper imports venv even for run/doctor; the embedded stdlib omits it.

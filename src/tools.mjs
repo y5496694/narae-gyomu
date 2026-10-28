@@ -8,7 +8,8 @@ import {run, digest} from './process.mjs';
 import {SchoolBrowser} from './school-browser.mjs';
 import {browserPath} from '../packages/narae_browser/src/browser.mjs';
 
-const hangulRoot = path.join(APP, 'packages/narae_hangul/1_나래엔진/narae-hangul');
+const hangulRoot = path.join(APP, 'packages/Narae_hangul_office/skills/narae-hangul-office');
+const officeRoot = () => process.env.NARAE_OFFICE_ROOT || readJSON(path.join(process.env.CODEX_HOME||path.join(process.env.USERPROFILE||'.','.codex'),'skills/narae-hangul-office/runtime.json'),{}).officeRoot || path.join(process.env.LOCALAPPDATA||'.','Programs/NaraeHangulOffice');
 const portalRoot = path.join(APP, 'packages/narae_gyomoo_portal/skills');
 const cbeEntry = path.join(APP, 'packages/CBE_CLI/cli.mjs');
 const wxsEntry = path.join(portalRoot, 'wxs-cli/scripts/wxs_cli.py');
@@ -55,9 +56,11 @@ export class Tools {
   async nativeJob(job, signal) {
     const id = crypto.randomUUID(), file = path.join(TMP, `hangul-${id}.json`), result = path.join(TMP, `hangul-${id}-result.json`);
     writeJSON(file, job);
-    // Use the upstream engine CLI directly, with user-site imports disabled in every process.
-    const response = await this.subprocess(this.python, ['-s','-X','utf8','-m','hangeul.automation',
-      '--automation', file, '--result', result], {signal, env: {...this.pythonEnv,QT_QPA_PLATFORM: 'offscreen'}});
+    const response = await this.subprocess(this.python, ['-s','-X','utf8',path.join(hangulRoot,'scripts/narae.py'),
+      'run', file, '--result', result], {signal, timeout:300000});
+    if(response.success!==true)throw new Fault('HANGUL_PROTOCOL','나래 한글 오피스의 성공 JSON을 받지 못했습니다.',response);
+    if(response.textDetailsLoaded===false)throw new Fault('NATIVE_READ_REQUIRED','변경 추적 문서는 나래 한글 오피스 live-read로 현재 한글 내용을 확인하세요.',response);
+    if(job.action==='create'||job.action==='edit')return {...response,artifacts:{document:response.path},modeled_content_verified:response.modeledContentVerified};
     return response;
   }
   documentFiles(value) {
@@ -128,7 +131,7 @@ export class Tools {
         try {browser = browserPath();} catch {browser = null;}
         return {models: this.models.status(), outputs: OUTPUTS, data: DATA,
           components: {browser: {installed: Boolean(browser), executable: browser, open: Boolean(this.browser)},
-            hangul: {installed: fs.existsSync(this.python), engine: hangulRoot},
+            hangul: {installed: fs.existsSync(this.python)&&fs.existsSync(path.join(officeRoot(),'src/cli.cjs')), engine: officeRoot(), requires:'한컴오피스 한글 + 나래 한글 오피스 설치.cmd'},
             cbe: {installed: fs.existsSync(cbeEntry), requires: '충북소통메신저 실행·로그인'},
             portal: {installed: fs.existsSync(wxsEntry), requires: '브라우저에서 직접 로그인'}},
           pending: [...this.pending.values()].filter(p => p.status === 'prepared').map(p => ({id: p.id,kind: p.kind,preview: p.preview}))};
@@ -195,12 +198,7 @@ export class Tools {
       case 'hangul.view': {
         const file=this.input(a.path);
         if(!/\.hwpx?$/i.test(file))throw new Fault('HANGUL_FORMAT','HWP 또는 HWPX 파일을 선택하세요.');
-        const log=fs.openSync(path.join(DATA,'logs/viewer.log'),'a');
-        const child=spawn(this.python,['-s','-X','utf8','-m','hangeul.viewer','open',file],
-          {windowsHide:true,stdio:['ignore',log,log],env:{...process.env,...this.pythonEnv,QT_QPA_PLATFORM:'windows'}});
-        fs.closeSync(log);this.viewers.add(child);child.once('exit',()=>this.viewers.delete(child));
-        await once(child,'spawn');
-        return {opened:true,path:file,pid:child.pid,viewer:'나래한글',note:'독립 조판 미리보기이며 문서별 표시 차이가 남아 있습니다.'};
+        return this.nativeJob({schema:1,action:'open',input:file},signal);
       }
       case 'hangul.create': {
         if (!a.body?.trim()) throw new Fault('EMPTY_BODY', '문서 본문이 비었습니다. 저장 전에 내용을 입력하세요.');
@@ -215,7 +213,8 @@ export class Tools {
       case 'hangul.edit': {
         const input = this.input(a.path), output = outputPath(a.filename);
         if (!Array.isArray(a.operations) || !a.operations.length) throw new Fault('EDIT_OPERATIONS','편집 작업을 지정하세요.');
-        return this.nativeJob({schema:1,action:'edit',input,output,operations:a.operations},signal);
+        if(!a.expected_input_sha256)throw new Fault('HANGUL_HASH','직전 inspect의 input_sha256을 지정하세요.');
+        return this.nativeJob({schema:1,action:'edit',input,output,expected_input_sha256:a.expected_input_sha256,operations:a.operations},signal);
       }
       case 'hangul.run': {
         const job = structuredClone(a.job);

@@ -39,7 +39,7 @@ Windows 10/11 x64, Chrome 또는 Edge, 모델을 실행할 여유 메모리가 �
 | 구성 | 연결 |
 |---|---|
 | [나래 브라우저](https://github.com/y5496694/narae_browser) | 원본 Playwright 엔진 + 업무 화면의 iframe·현재 값·체크 상태 관찰 보강 |
-| [나래 한글](https://github.com/y5496694/narae_hangul) | 원본 독립 엔진 CLI로 HWP/HWPX 읽기·생성·보존 편집, 실제 저장 후 재열람 검증 |
+| [나래 한글](https://github.com/y5496694/Narae_hangul_office) | 나래 한글 오피스 CLI로 HWP/HWPX 읽기·생성·보존 편집, 실제 저장 후 재열람 검증 |
 | [CBE CLI](https://github.com/y5496694/CBE_CLI) | 원본 CLI로 교직원 검색·쪽지·대화 조회·전송 사전 점검과 확인된 전송 |
 | [나래교무포털](https://github.com/y5496694/narae_gyomoo_portal) | 영역별 절차 + 나래 브라우저의 실제 화면 제어 + 열린 WXS의 원본 CLI |
 
@@ -79,3 +79,5 @@ npm start
 개발용 `scripts/prepare-local.py`는 이 PC의 D:에 이미 검증해 둔 실제 학습 산출물을 묶는 스크립트입니다. 다른 PC에서 학습 폴더를 자동 생성하는 설치기가 아닙니다. 일반 사용자는 가중치가 포함된 배포 파일을 사용합니다. [검증 기록](verification/)에는 로컬 합성 문서·모의 전송·실제 모델 연결 시험을 구분해 남깁니다. 학교 계정 로그인·시험 메시지·실제 공문 생성을 설치 검증으로 수행하지 않았습니다.
 
 대화·문서·쿠키·인증정보·API 접속 토큰은 공개 배포본에 포함하지 않습니다. 사용 중 생성되는 개인 자료는 별도 D: 폴더에 남으며 모델 학습 자료로 수집하지 않습니다. 이 배포본은 코드서명이 없는 미리보기 버전입니다.
+
+한글 문서 작업은 [나래 한글 오피스](https://github.com/y5496694/Narae_hangul_office)의 CLI로 실행합니다. 한컴오피스 한글을 먼저 설치한 뒤 오피스의 설치.cmd를 한 번 실행하세요. 별도 경로는 NARAE_OFFICE_ROOT로 지정합니다. 기존 독립 뷰어는 사용하지 않습니다. 편집에는 직전 inspect의 input_sha256을 전달합니다.
