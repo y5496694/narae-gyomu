@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {EventEmitter} from 'node:events';
-process.env.NARAE_GYOMU_DATA=fs.mkdtempSync('D:/Codex/tmp/gyomu-core-');
+process.env.NARAE_GYOMU_DATA=fs.mkdtempSync((await import('node:os')).tmpdir()+'/gyomu-core-');
 const {HOME,DATA,initialize,outputPath}=await import('../src/paths.mjs');
 const {Models}=await import('../src/models.mjs');
 const {Tools}=await import('../src/tools.mjs');

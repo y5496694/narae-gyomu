@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import fs from 'node:fs';
-process.env.NARAE_GYOMU_DATA=fs.mkdtempSync('D:/Codex/tmp/gyomu-browser-');
+process.env.NARAE_GYOMU_DATA=fs.mkdtempSync((await import('node:os')).tmpdir()+'/gyomu-browser-');
 const {initialize}=await import('../src/paths.mjs');initialize();
 const {SchoolBrowser}=await import('../src/school-browser.mjs');
 
@@ -23,7 +23,7 @@ test('real Narae browser handles iframe observations, stale refs and checkbox st
     assert.equal(view.elements.find(e=>e.label==='이름').value,'가상교사');
     const checked=await browser.execute({action:'check',ref:view.elements.find(e=>e.type==='checkbox').ref});
     assert.equal(checked.elements.find(e=>e.type==='checkbox').checked,true);
-    await assert.rejects(browser.execute({action:'click',ref:checked.elements.find(e=>e.label==='상신').ref}),e=>e.code==='UNSUPPORTED_FINAL_ACTION');
+    await assert.rejects(browser.execute({action:'click',ref:checked.elements.find(e=>e.label==='상신').ref}),e=>e.code==='FINAL_ACTION_CONFIRMATION_REQUIRED');
     assert.match((await browser.execute({action:'read'})).text,/2026-10-20/);
   }finally{await browser.browser?.close();await new Promise(r=>site.close(r));}
 });

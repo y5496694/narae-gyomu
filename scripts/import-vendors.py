@@ -3,14 +3,17 @@ import argparse,hashlib,json,shutil,subprocess,tempfile,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 PROJECTS=['narae_browser','Narae_hangul_office','CBE_CLI','narae_gyomoo_portal']
-TMP=Path('D:/Codex/tmp');TMP.mkdir(parents=True,exist_ok=True)
+TMP=Path(tempfile.gettempdir())
 parser=argparse.ArgumentParser()
 parser.add_argument('--only',nargs='+',choices=PROJECTS,default=PROJECTS)
 parser.add_argument('--update',action='store_true')
+parser.add_argument('--source',action='append',default=[],metavar='NAME=PATH',help='Explicit local clone for a named source')
 args=parser.parse_args()
+overrides=dict(value.split('=',1) for value in args.source)
+if set(overrides)-set(PROJECTS):parser.error('Unknown source override')
 lock=json.loads((ROOT/'sources.lock.json').read_text('utf-8-sig')) if args.update else {'schema':1,'sources':[]}
 for name in args.only:
-    repo=ROOT.parent/name
+    repo=Path(overrides[name]).resolve() if name in overrides else ROOT.parent/name
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo).decode().strip()
     remote=subprocess.check_output(['git','remote','get-url','origin'],cwd=repo).decode().strip()
     target=ROOT/'packages'/name

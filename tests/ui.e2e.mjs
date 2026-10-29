@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {chromium} from 'playwright-core';
-process.env.NARAE_GYOMU_DATA=fs.mkdtempSync('D:/Codex/tmp/gyomu-ui-');
+process.env.NARAE_GYOMU_DATA=fs.mkdtempSync((await import('node:os')).tmpdir()+'/gyomu-ui-');
 const {DATA}=await import('../src/paths.mjs');
 const {createApp}=await import('../src/server.mjs');
 const {browserPath}=await import('../packages/narae_browser/src/browser.mjs');
