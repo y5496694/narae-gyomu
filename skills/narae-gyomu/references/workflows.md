@@ -6,6 +6,8 @@
 
 원본 브라우저 엔진 위에 iframe 선택·필터/페이지 관찰·입력값/체크 상태 확인을 보강했다. 직접 JS·셸 실행 도구는 없다. 초안·조회 요청은 미상신으로 끝낸다. 명시적인 최종 상신·결재 요청은 문서·결재선을 확인하고 confirmFinalAction:true, expectedDocument, expectedLabel, expectedUrl, expectedState(최신 snapshot.finalState)로 한 번 실행한다. 정확히 관찰한 확인창 문구만 수락하며 불명확하면 반복하지 않는다. 인증서·보안 프로그램·WXS Client는 사용자 PC에 정상 설치되어 있어야 한다.
 
+메뉴 트리·탭·메뉴 항목·표 셀도 snapshot의 실제 ref로 선택한다. `expanded`가 확인된 treeitem은 `expand` 또는 `collapse`에 현재 ref를 전달해 펼치거나 접는다. 메뉴가 바뀌면 새 snapshot에서 하위 항목을 찾는다. 메뉴의 `결재`와 문서의 최종 결재 버튼을 구분하며 최종 처리 확인 절차는 그대로 따른다.
+
 ## 문서
 
 독립 파일은 첨부 → `hangul.inspect` → 문단·표와 예외·기한을 확인 → 요약 또는 새 출력의 편집/작성 → 실제 엔진의 success·artifacts·저장 검증을 확인한다. 긴 원문은 offset으로 더 읽는다. 모델에 전달되는 일부 결과가 전부라는 뜻은 아니다. 고급 표·그림 편집의 지원 범위와 한컴 COM 필요 여부는 원본 jobs/hancom 문서를 확인한다.

@@ -6,7 +6,7 @@ export const tools = [
   {name: 'skill.read', label: '업무 절차', description: '작업 전에 해당 영역의 절차와 한계를 읽는다. 긴 문서는 offset으로 이어 읽는다.',
     parameters: object({area: enumeration(['overview', 'portal', 'neis', 'edufine', 'wxs', 'hangul', 'hangul-jobs', 'cbe']), document: string, offset: integer}, ['area'])},
   {name: 'browser', label: '나래 브라우저', description: '실제 Chrome/Edge를 제어한다. snapshot의 실제 ref만 사용한다. 명시적으로 요청한 상신·결재는 문서·결재선을 확인한 뒤 confirmFinalAction:true와 expectedDocument/expectedLabel/expectedUrl/expectedState(직전 snapshot.finalState)로 실행한다. 네이티브 확인창은 관찰한 정확한 confirmationText만 수락한다. 클릭만으로 완료 보고하지 않는다. 발송·삭제는 지원하지 않는다.',
-    parameters: object({action: enumeration(['open','snapshot','read','click','fill','select','check','uncheck','press','scroll','wait','back','tabs','tab','frames','frame']),
+    parameters: object({action: enumeration(['open','snapshot','read','click','fill','select','check','uncheck','press','expand','collapse','scroll','wait','back','tabs','tab','frames','frame']),
       url: string, ref: string, text: string, value: string, key: string, index: integer, offset: integer, limit: integer, chars: integer, filter: string, selector: string, pixels: integer,
       confirmFinalAction: {type:'boolean'}, expectedDocument: string, expectedLabel: string, expectedUrl: string, expectedState: string, confirmationText: string}, ['action'])},
   {name: 'portal.open', label: '업무포털 열기', description: '등록된 교육청 업무포털을 나래 브라우저로 연다. 사용자가 직접 로그인하며 기존 창은 재사용한다. 로그인 성공 여부는 실제 화면으로 확인한다.', parameters: object()},

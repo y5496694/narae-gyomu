@@ -80,7 +80,7 @@ export class SchoolBrowser extends BrowserEngine {
     this.refs.clear();
     const result = await this.scope().evaluate(({limit, chars, offset, filter, version}) => {
       const visible = e => {const s = getComputedStyle(e), r = e.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 0 && r.height > 0;};
-      const nodes = [...document.querySelectorAll('a[href],button,input:not([type=hidden]),textarea,select,[role=button],[role=link],[contenteditable=true]')];
+      const nodes = [...document.querySelectorAll('a[href],button,input:not([type=hidden]),textarea,select,[role=button],[role=link],[role=treeitem],[role=tab],[role=menuitem],[role=gridcell],[role=option],[role=combobox],[role=checkbox],[role=radio],[contenteditable=true]')];
       const elements = [];
       for (const e of nodes) {
         if (!visible(e)) continue;
@@ -91,7 +91,9 @@ export class SchoolBrowser extends BrowserEngine {
         const ref = `${version}/e${elements.length + 1}`;
         e.setAttribute('data-narae-ref', ref);
         elements.push({ref, role: e.getAttribute('role') || (tag === 'a' ? 'link' : tag === 'input' ? 'textbox' : tag),
-          label, tag, type, disabled: Boolean(e.disabled),
+          label, tag, type, disabled: Boolean(e.disabled) || e.getAttribute('aria-disabled') === 'true',
+          ...(e.hasAttribute('aria-expanded') ? {expanded: e.getAttribute('aria-expanded') === 'true'} : {}),
+          ...(e.hasAttribute('aria-selected') ? {selected: e.getAttribute('aria-selected') === 'true'} : {}),
           ...(tag === 'a' ? {href: e.href} : {}),
           ...(['input', 'textarea', 'select'].includes(tag) ? {value: type === 'password' ? '[비밀번호]' : e.value} : {}),
           ...(['checkbox', 'radio'].includes(type) ? {checked: e.checked} : {}),
@@ -128,6 +130,21 @@ export class SchoolBrowser extends BrowserEngine {
       const navigation = /^(treeitem|tab|menuitem)$/.test(entry.role);
       const operation = navigation ? null : finalOperation(entry.label);
       if (operation) return this.finalClick(command, entry, operation);
+    }
+    if (['expand', 'collapse'].includes(command.action)) {
+      const {entry, locator} = this.ref(command.ref);
+      const wanted = command.action === 'expand';
+      if (entry.role !== 'treeitem' || typeof entry.expanded !== 'boolean' || entry.disabled)
+        throw new Fault('TREE_ITEM_REQUIRED', '현재 snapshot에서 펼침 상태가 확인된 활성 treeitem을 지정하세요.');
+      if (entry.expanded !== wanted) {
+        await locator.press(wanted ? 'ArrowRight' : 'ArrowLeft');
+        try {
+          await this.scope().locator(`[data-narae-ref="${entry.ref}"][aria-expanded="${wanted}"]`).waitFor({state:'visible',timeout:12000});
+        } catch {
+          throw new Fault('TREE_STATE_NOT_CONFIRMED', '메뉴 펼침 상태가 확인되지 않았습니다. 새 snapshot을 확인하세요.');
+        }
+      }
+      this.invalidate(); return this.snapshot(command);
     }
     if (command.action === 'press' && !['Tab', 'Shift+Tab', 'Escape', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp'].includes(command.key))
       throw new Fault('UNSUPPORTED_KEY', '현재 자동 키 입력은 이동·선택·닫기 키만 지원합니다. 검색 버튼의 실제 ref를 사용하세요.');
