@@ -165,7 +165,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "160ba1ecfb4ad4734193ea86ea13b3843eaada25",
+      "commit": "af749120c2495988742fe5723e3cd2d2dd8e7bd7",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -183,7 +183,7 @@
         "skills/narae-gyomu-edufine/agents/openai.yaml": "40fc4b4968e519b0132a9d4175b55ae4306980bd9d07d9460b30d801538983a7",
         "skills/narae-gyomu-edufine/references/circulation.md": "1f973ce23f4a773188dd0e92ba0adb0e0da9f688fe43b1607f68713f895aa91c",
         "skills/narae-gyomu-edufine/references/document-register.md": "a1b3dde01b131645c064d3acd2dff005fc0a530a6a05280e4eb18e69e034a011",
-        "skills/narae-gyomu-edufine/references/wxs-cli.md": "4241d232c877cf3f7e1656be5be0019af748a7ec34148f3e6fd813f510e64a82",
+        "skills/narae-gyomu-edufine/references/wxs-cli.md": "755376fb99df177d89919a9a084993c647ca60de7d9ac6eb537a6a25f066ffd1",
         "skills/narae-gyomu-edufine/SKILL.md": "df821db37827b7cc19406a1740fe1833b472c7e091af047d662e23472e9e5c03",
         "skills/narae-gyomu-neis/agents/openai.yaml": "a958e1cc2f284035ab49cd44185030da56f25a1cb4ab584dd20cd4b7a469d05e",
         "skills/narae-gyomu-neis/references/leave-draft.md": "da6c6fee3c30c316f715191db8247ad067e215bd3cd5e1d9198a1eb1b4bb7ed8",
