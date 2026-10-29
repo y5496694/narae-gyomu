@@ -7,6 +7,7 @@ import {APP, HOME, DATA, TMP, OUTPUTS, Fault, readJSON, writeJSON, outputPath} f
 import {run, digest} from './process.mjs';
 import {SchoolBrowser} from './school-browser.mjs';
 import {browserPath} from '../packages/narae_browser/src/browser.mjs';
+import {WxsCapture} from './wxs-capture.mjs';
 
 const hangulRoot = path.join(APP, 'packages/Narae_hangul_office/skills/narae-hangul-office');
 const officeRoot = () => process.env.NARAE_OFFICE_ROOT || readJSON(path.join(process.env.CODEX_HOME||path.join(process.env.USERPROFILE||'.','.codex'),'skills/narae-hangul-office/runtime.json'),{}).officeRoot || path.join(process.env.LOCALAPPDATA||'.','Programs/NaraeHangulOffice');
@@ -33,6 +34,7 @@ export class Tools {
     this.viewers = new Set();
     this.python = path.join(HOME, readJSON(path.join(HOME, 'runtime.json')).python);
     this.pythonEnv={LOCALAPPDATA:path.join(DATA,'native/Local'),APPDATA:path.join(DATA,'native/Roaming')};
+    this.captures=new WxsCapture({python:this.python,entry:wxsEntry,directory:path.join(DATA,'jobs/wxs-reads'),env:this.pythonEnv});
   }
   register(files) {
     return files.map(file => {
@@ -232,6 +234,13 @@ export class Tools {
         if(!['doctor','windows'].includes(a.operation) && !a.hwnd) throw new Fault('WXS_WINDOW','windows로 확인한 HWND를 지정하세요.');
         const result=await this.wxs(args,signal);
         if(a.operation==='windows')for(const window of result.windows || [])this.windows.add(BigInt(window.hwnd).toString());
+        return result;
+      }
+      case 'wxs.read': {
+        if(a.operation==='prepare')return this.captures.prepare(a.expected_title,signal);
+        if(a.operation!=='result')throw new Fault('WXS_OPERATION','prepare 또는 result를 선택하세요.');
+        const result=this.captures.result(a.id);
+        for(const file of result.document?.attachments?.files||[])if(file.exported&&file.path)this.register([file.path]);
         return result;
       }
       case 'wxs.prepare': {

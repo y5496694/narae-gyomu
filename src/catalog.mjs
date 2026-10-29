@@ -31,6 +31,8 @@ export const tools = [
     parameters: object({operation: enumeration(['doctor','windows','inspect','text','attachments','draft-status']), hwnd: string}, ['operation'])},
   {name: 'wxs.prepare', label: '기안 입력 준비', description: '공개 WXS 설정 JSON을 원본 CLI로 점검해 입력 미리보기를 만든다. 사용자가 미리보기에서 적용하며 최종 상신·발송은 하지 않는다.',
     parameters: object({hwnd: string, config: {type: 'object'}}, ['hwnd','config'])},
+  {name: 'wxs.read', label: '공문 한 건 읽기', description: 'prepare(expected_title)로 원본 WXS CLI의 ready:true를 먼저 확인하고, 그 후 웹에서 같은 제목 한 건만 연다. result(id)로 실제 본문·모든 첨부 저장·closed 상태를 받는다. 인증 대기 창은 보존한다. pending:true면 다시 result로 확인한다.',
+    parameters: object({operation:enumeration(['prepare','result']),expected_title:string,id:string},['operation'])},
   {name: 'wxs.save', label: '공문 임시저장 준비', description: '확인한 창의 제목과 임시저장 이름으로 저장 미리보기를 만든다. 사용자가 적용한 뒤 실제 저장 상태를 확인한다.',
     parameters: object({hwnd: string, expected_title: string, name: string}, ['hwnd','expected_title','name'])},
   {name: 'files.list', label: '작성 파일', description: '이 프로그램에서 만든 출력 파일 목록을 확인한다.', parameters: object()},
