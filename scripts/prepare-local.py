@@ -64,4 +64,9 @@ if not (target/'PySide6').exists():
         'PySide6==6.12.0','olefile>=0.47,<1','fonttools==4.66.1','pycryptodome==3.23.0','pypdf==6.13.0',
         'Pillow>=11,<13','pywin32==312'],check=True)
 subprocess.run([str(python/'python.exe'),'-s','-c','import PySide6,olefile,fontTools,Crypto,pypdf,PIL,win32com.client,site; assert not site.ENABLE_USER_SITE; print("portable Python ready")'],check=True)
+reader_probe=subprocess.run([str(python/'python.exe'),'-s','-c','import pypdfium2,openpyxl,xlrd,docx,pptx'],capture_output=True)
+if reader_probe.returncode:
+    subprocess.run([getattr(sys,'_base_executable',sys.executable),'-m','pip','install','--target',str(target),
+        'pypdfium2>=5.12,<6','openpyxl==3.1.5','xlrd==2.0.2','python-docx==1.2.0','python-pptx==1.0.2'],check=True)
+subprocess.run([str(python/'python.exe'),'-s','-c','import pypdfium2,openpyxl,xlrd,docx,pptx; print("attachment readers ready")'],check=True)
 print('portable models and runtime ready',flush=True)
