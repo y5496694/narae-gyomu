@@ -35,6 +35,7 @@ export class Tools {
     this.python = path.join(HOME, readJSON(path.join(HOME, 'runtime.json')).python);
     this.pythonEnv={LOCALAPPDATA:path.join(DATA,'native/Local'),APPDATA:path.join(DATA,'native/Roaming')};
     this.captures=new WxsCapture({python:this.python,entry:wxsEntry,directory:path.join(DATA,'jobs/wxs-reads'),env:this.pythonEnv});
+    this.attachmentReads=new Map();
   }
   register(files) {
     return files.map(file => {
@@ -242,6 +243,17 @@ export class Tools {
         const result=this.captures.result(a.id);
         for(const file of result.document?.attachments?.files||[])if(file.exported&&file.path)this.register([file.path]);
         return result;
+      }
+      case 'wxs.attachment': {
+        const file=this.input(a.path),hash=await digest(file);let cached=this.attachmentReads.get(file);
+        if(cached&&cached.hash!==hash)throw new Fault('ATTACHMENT_CHANGED','조회 중 첨부가 변경되었습니다. 원본과 새 작업을 확인하세요.');
+        if(!cached){
+          const directory=path.join(DATA,'jobs','attachment-'+crypto.randomUUID());
+          try{await this.subprocess(this.python,['-s','-X','utf8',path.join(portalRoot,'wxs-cli/scripts/attachment_reader.py'),file,'--out-dir',directory],{signal,env:this.pythonEnv,timeout:300000});}catch(error){if(!fs.existsSync(path.join(directory,'result.json')))throw error;}
+          cached={hash,result:readJSON(path.join(directory,'result.json'))};this.attachmentReads.set(file,cached);
+        }
+        const full=cached.result,offset=Math.max(0,Number(a.offset||0)),chars=Math.min(12000,Math.max(100,Number(a.chars||4000))),text=full.text||'';
+        return {path:file,sha256:hash,status:full.status,reader:full.reader,text:text.slice(offset,offset+chars),offset,totalChars:text.length,nextOffset:offset+chars,hasMore:text.length>offset+chars,source_unchanged:full.source_unchanged,content_reviewed:false,needs_visual_review:full.needs_visual_review||false,visual_pages:full.visual_pages||[],warnings:full.warnings||[],...(full.error?{error:full.error}:{})};
       }
       case 'wxs.prepare': {
         this.windowId(a.hwnd);
