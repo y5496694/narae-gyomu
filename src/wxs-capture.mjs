@@ -26,10 +26,11 @@ export class WxsCapture {
     });
     return {id,ready:true,expected_title:expectedTitle,instruction:'이제 현재 웹 목록에서 이 제목 한 건만 연 뒤 같은 id로 result를 조회하세요.'};
   }
-  result(id) {
+  result(id,{offset=0,chars=4000}={}) {
     const job=this.jobs.get(id);if(!job)throw new Error('현재 세션에서 준비한 읽기 id가 필요합니다.');
     if(!job.done)return {id,ready:job.ready,pending:true,expected_title:job.expected_title};
     let document;if(fs.existsSync(job.output))document=JSON.parse(fs.readFileSync(job.output,'utf8'));
+    if(document?.body?.text){const text=document.body.text;offset=Math.max(0,Number(offset));chars=Math.min(12000,Math.max(100,Number(chars)));document.body={...document.body,text:text.slice(offset,offset+chars),offset,totalChars:text.length,nextOffset:offset+chars,hasMore:text.length>offset+chars};}
     return {id,pending:false,expected_title:job.expected_title,exit_code:job.code,output:job.output,...(document?{document}:{error:job.error||'WXS 읽기를 완료하지 못했습니다. 다른 창을 임의로 고르거나 같은 제목을 다시 열지 마세요.'})};
   }
 }

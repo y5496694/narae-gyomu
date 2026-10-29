@@ -240,7 +240,7 @@ export class Tools {
       case 'wxs.read': {
         if(a.operation==='prepare')return this.captures.prepare(a.expected_title,signal);
         if(a.operation!=='result')throw new Fault('WXS_OPERATION','prepare 또는 result를 선택하세요.');
-        const result=this.captures.result(a.id);
+        const result=this.captures.result(a.id,a);
         for(const file of result.document?.attachments?.files||[])if(file.exported&&file.path)this.register([file.path]);
         return result;
       }
