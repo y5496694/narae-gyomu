@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-process.env.NARAE_GYOMU_DATA=fs.mkdtempSync('D:/Codex/tmp/gyomu-docs-');
+process.env.NARAE_GYOMU_DATA=fs.mkdtempSync((await import('node:os')).tmpdir()+'/gyomu-docs-');
 const {DATA,OUTPUTS,initialize}=await import('../src/paths.mjs');initialize();
 const {Tools}=await import('../src/tools.mjs');
 test('Narae Hangul Office CLI creates and edits HWP/HWPX without changing originals',async()=>{
