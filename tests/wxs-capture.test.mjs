@@ -18,3 +18,9 @@ test('WXS bridge never reports readiness after a failed original reader',async()
  const capture=new WxsCapture({python:'synthetic-python',entry:'original-wxs-cli.py',directory,spawnReader:()=>{const child=new EventEmitter();child.stdout=new PassThrough();child.stderr=new PassThrough();child.kill=()=>{};setImmediate(()=>child.emit('exit',1));return child;}});
  try{await assert.rejects(capture.prepare('합성 문서'),/문서를 열지/);assert.equal([...capture.jobs.values()][0].done,true);}finally{fs.rmSync(directory,{recursive:true,force:true});}
 });
+
+test('an existing approved document uses the original read-open reader and keeps exact identity',async()=>{
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'wxs-existing-'));let args,child;
+ const capture=new WxsCapture({python:'synthetic-python',entry:'original-wxs-cli.py',directory,spawnReader:(_exe,argv)=>{args=argv;child=new EventEmitter();child.stdout=new PassThrough();child.stderr=new PassThrough();child.kill=()=>{};setImmediate(()=>child.stdout.write('{"ready":true}\n'));return child;}});
+ try{await assert.rejects(capture.prepare('합성 공문',undefined,'invented'),/HWND/);assert.equal(capture.jobs.size,0);const ready=await capture.prepare('합성 공문',undefined,'12345');assert.equal(ready.existing_window,true);assert(args.includes('read-open'));assert(!args.includes('read-next'));assert.equal(args[args.indexOf('--hwnd')+1],'12345');assert.equal(args[args.indexOf('--expected-title')+1],'합성 공문');assert.match(ready.instruction,/새 공문을 열지/);assert.equal(capture.result(ready.id).pending,true);child.emit('exit',1);}finally{fs.rmSync(directory,{recursive:true,force:true});}
+});
