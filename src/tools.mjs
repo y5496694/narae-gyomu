@@ -32,7 +32,7 @@ export class Tools {
     this.people = new Map(); this.jobs = new Map();
     this.windows = new Set();
     this.viewers = new Set();
-    this.python = path.join(HOME, readJSON(path.join(HOME, 'runtime.json')).python);
+    this.python = path.resolve(HOME, readJSON(path.join(HOME, 'runtime.json')).python);
     this.pythonEnv={LOCALAPPDATA:path.join(DATA,'native/Local'),APPDATA:path.join(DATA,'native/Roaming')};
     this.captures=new WxsCapture({python:this.python,entry:wxsEntry,directory:path.join(DATA,'jobs/wxs-reads'),env:this.pythonEnv});
     this.attachmentReads=new Map();
