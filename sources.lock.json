@@ -165,7 +165,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "af749120c2495988742fe5723e3cd2d2dd8e7bd7",
+      "commit": "87e3927d48447f191abebad24e67d0bc78257825",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -214,7 +214,7 @@
         "skills/wxs-cli/scripts/wxs_native.py": "fdcfb31054a6cf833c60cd1752df5419a6df08b60cc0005f588496ec61568606",
         "skills/wxs-cli/scripts/wxs_read.py": "f8b9c67354b118b0f86e7eea28180c8a4b503296b1c22855e6022856a432ff0d",
         "skills/wxs-cli/scripts/wxs_runtime.py": "cdec31d8db84f9050eac3c10655b780f488b9a87b6a6ad00f8136e4c1be4393d",
-        "skills/wxs-cli/SKILL.md": "dcaf3e0fdea4333bb83b866e7b45c26c9a5fde92e0cdde9ff6cb1de702232135",
+        "skills/wxs-cli/SKILL.md": "3564f9d7f9536b75b1bd732883da6f5fcc0a06a0d6eafa26368e9ebd8653ee22",
         "tests/test_actions.cjs": "cbdd9099497e5491781576493472cc34b6d1efe5786c73ea1199793864820658",
         "tests/test_attachment_reader.py": "1c567d17d3cac238fcd9ad15dbe159d98f5f44b565dd2883be3381b3109e1361",
         "tests/test_config.py": "53cc1633e728156a2c70b3033300b177f38c2a3be1da39f3291bdf4380bd2138",
