@@ -8,6 +8,9 @@ test('authorized final actions use real native buttons, exact confirmation, chan
  const server=http.createServer((req,res)=>{
   res.setHeader('content-type','text/html;charset=utf-8');
   if(req.method==='POST'){records.push(req.url);res.end('ok');return;}
+  if(req.url.includes('retrieveSanctnProgrsDocList.do')){
+   res.end(`<!doctype html><meta charset="utf-8"><h1>문서진행</h1><table><tr><td><input type="checkbox" checked></td><td><a onclick="viewDocument('SYNTHDOC000000000001')">합성 활용계획 QA-002</a></td></tr></table><button onclick="if(confirm('선택한 문서를 회수하시겠습니까?'))fetch('/record?kind=withdraw',{method:'POST'}).then(()=>{window.completed=true})">회수</button>`);return;
+  }
   const approve=req.url.includes('approve'),label=approve?'결재':'상신';
   const message=req.url.includes('wrong-dialog')?'결재 문서를 삭제하시겠습니까?':label+'하시겠습니까?';
   res.end(`<!doctype html><meta charset="utf-8"><h1>합성 조퇴 신청 QA-001</h1><p>합성 검토자 → 합성 결재자</p><label>사유<input id="reason" value="합성 검증"></label><button onclick="if(confirm('${message}'))fetch('/record?kind=${label}',{method:'POST'}).then(()=>{window.completed=true;document.querySelector('#result').textContent='QA-001 처리 상태 반영';})">${label}</button><button>삭제</button><p id="result">미처리</p>`);
@@ -59,6 +62,20 @@ test('authorized final actions use real native buttons, exact confirmation, chan
    assert.equal(s.finalAction.nativeDialog.accepted,false);
    await assert.rejects(browser.execute(click(s,'삭제')),e=>e.code==='UNSUPPORTED_FINAL_ACTION');
    assert.equal(records.length,2);
+  });
+  await t.test('withdrawal binds the one selected document ID, exact dialog and one server action',async()=>{
+   s=await browser.execute({action:'open',url:base+'/retrieveSanctnProgrsDocList.do'});
+   assert.equal(s.selectedDocuments[0].documentIds[0],'SYNTHDOC000000000001');
+   const command=()=>({...click(s,'회수'),expectedDocument:'합성 활용계획 QA-002',expectedDocumentId:'SYNTHDOC000000000001'});
+   await assert.rejects(browser.execute({...command(),expectedDocumentId:'SYNTHDOC000000000002'}),e=>e.code==='WITHDRAW_TARGET_REQUIRED');
+   s=await browser.execute(command());
+   assert.equal(s.finalAction.nativeDialog.accepted,false);assert.equal(records.length,2);
+   s=await browser.execute({...command(),confirmationText:'선택한 문서를 회수하시겠습니까?'});
+   await browser.page.waitForFunction(()=>window.completed===true);
+   assert.equal(records.length,3);assert.equal(s.finalAction.operation,'withdraw');assert.equal(s.finalAction.completed,false);
+   s=await browser.snapshot();
+   await assert.rejects(browser.execute({...command(),confirmationText:'선택한 문서를 회수하시겠습니까?'}),e=>e.code==='FINAL_ACTION_ALREADY_ATTEMPTED');
+   assert.equal(records.length,3);
   });
  }finally{await browser.browser?.close();await new Promise(r=>server.close(r));}
 });

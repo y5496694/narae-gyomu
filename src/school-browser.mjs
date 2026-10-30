@@ -11,10 +11,23 @@ function finalDOM(element) {
 }
 const finalDigest = state => createHash('sha256').update(JSON.stringify(state)).digest('hex');
 
+function selectedDocumentsDOM() {
+  if (!/\/retrieveSanctnProgrsDocList\.do$/.test(location.pathname)) return [];
+  return [...document.querySelectorAll('tr')].filter(row=>row.querySelector('input[type=checkbox]:checked')).map(row=>{
+    const identifiers=new Set();
+    for(const element of row.querySelectorAll('a[onclick],input[type=checkbox]')) {
+      const value=element.getAttribute('onclick') || element.value || '';
+      for(const id of value.match(/\b[A-Z][A-Z0-9]{17,31}\b/g) || [])identifiers.add(id);
+    }
+    return {text:row.innerText.replace(/\s+/g,' ').trim(),documentIds:[...identifiers]};
+  }).filter(row=>row.documentIds.length);
+}
+
 export function finalOperation(label) {
   const name = label.replace(/\s+/g, '').replace(/[.!…]+$/, '');
   if (/^(?:최종)?(?:상신|결재올림)(?:하기)?$/.test(name)) return 'submit';
   if (/^(?:최종)?(?:결재|결재승인|승인)(?:하기)?$/.test(name)) return 'approve';
+  if (/^(?:기안)?회수(?:하기)?$/.test(name)) return 'withdraw';
   if (/^(?:최종)?(?:공람확인|공람완료|발송|전송|삭제)(?:하기|합니다|요청)?$/.test(name)) return 'unsupported';
   return null;
 }
@@ -28,7 +41,7 @@ export class SchoolBrowser extends BrowserEngine {
         const auth = this.finalAuthorization;
         const accepted = Boolean(auth && auth.page === page && !auth.dialog && dialog.type() === 'confirm' &&
           auth.text && dialog.message() === auth.text && !/삭제|발송|전송|반려|인증|암호|서명/.test(dialog.message()) &&
-          (auth.operation === 'submit' ? /상신|결재올림/ : /결재|승인/).test(dialog.message()));
+          (auth.operation === 'submit' ? /상신|결재올림/ : auth.operation === 'withdraw' ? /회수/ : /결재|승인/).test(dialog.message()));
         if (auth && auth.page === page && !auth.dialog) auth.dialog = {type:dialog.type(),message: dialog.message(), accepted};
         await (accepted ? dialog.accept() : dialog.dismiss()).catch(() => {});
       });
@@ -51,7 +64,13 @@ export class SchoolBrowser extends BrowserEngine {
       text: (e.closest('[role=dialog],dialog') || document.body).innerText}));
     if (current.disabled || current.label !== entry.label || !current.text.includes(command.expectedDocument))
       throw new Fault('FINAL_ACTION_TARGET_CHANGED', '현재 문서·버튼·입력 내용을 다시 확인하세요.');
-    const key = JSON.stringify([this.scope().url(), operation, command.expectedDocument]);
+    if (operation === 'withdraw') {
+      const selected=await this.scope().evaluate(selectedDocumentsDOM);
+      if(!command.expectedDocumentId || selected.length!==1 || !selected[0].text.includes(command.expectedDocument) ||
+          selected[0].documentIds.length!==1 || selected[0].documentIds[0]!==command.expectedDocumentId)
+        throw new Fault('WITHDRAW_TARGET_REQUIRED','문서진행에서 선택한 한 건의 제목과 실제 문서 ID를 대조하세요.');
+    }
+    const key = JSON.stringify([this.scope().url(), operation, command.expectedDocumentId || command.expectedDocument]);
     if (this.finalAttempts.has(key)) throw new Fault('FINAL_ACTION_ALREADY_ATTEMPTED', '이미 시도한 처리입니다. 서버 상태를 확인하고 중복 실행하지 마세요.');
     this.finalAttempts.add(key);
     const auth = {page: this.page, operation, text: command.confirmationText};
@@ -106,7 +125,8 @@ export class SchoolBrowser extends BrowserEngine {
     }, {version, limit: bound(args.limit, 1, 100, 35), chars: bound(args.chars, 100, 12000, 2000),
       offset: bound(args.offset, 0, 10000, 0), filter: args.filter || '', selector: args.selector || ''});
     for (const entry of result.elements) this.refs.set(entry.ref, entry);
-    return this.withFinalState({version, frameIndex: this.page.frames().indexOf(this.scope()), ...result, untrusted: true});
+    return this.withFinalState({version, frameIndex: this.page.frames().indexOf(this.scope()), ...result,
+      selectedDocuments:await this.scope().evaluate(selectedDocumentsDOM),untrusted: true});
   }
   async read(args = {}) {
     return this.scope().evaluate(({chars, offset, selector}) => {
