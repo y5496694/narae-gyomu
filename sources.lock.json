@@ -165,7 +165,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "f671a2c58ac3bbba1dfa2e68e300862a6c70c4c3",
+      "commit": "22641181785f2da69f7f6e58f1494263bcf77a61",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -186,7 +186,7 @@
         "skills/narae-gyomu-edufine/references/wxs-cli.md": "755376fb99df177d89919a9a084993c647ca60de7d9ac6eb537a6a25f066ffd1",
         "skills/narae-gyomu-edufine/SKILL.md": "df821db37827b7cc19406a1740fe1833b472c7e091af047d662e23472e9e5c03",
         "skills/narae-gyomu-neis/agents/openai.yaml": "a958e1cc2f284035ab49cd44185030da56f25a1cb4ab584dd20cd4b7a469d05e",
-        "skills/narae-gyomu-neis/references/leave-draft.md": "da6c6fee3c30c316f715191db8247ad067e215bd3cd5e1d9198a1eb1b4bb7ed8",
+        "skills/narae-gyomu-neis/references/leave-draft.md": "21a13a6f20183a031da47469da275eae797a5a1b162f6e6909722642fb166bf0",
         "skills/narae-gyomu-neis/SKILL.md": "01c6ad927e65e4382e275da00665fce92311b51ea351e0e7072981e178c0a6ba",
         "skills/narae-gyomu-work-portal/agents/openai.yaml": "93be3677cc873216496a256bf587fa6a87e8116daae776039dccea6401e1651a",
         "skills/narae-gyomu-work-portal/references/local-certificate.md": "979cfb7cb3208c6d8d701fa0f1e008ba7c659ddc4fedfbf267ea59aabe1f2236",
