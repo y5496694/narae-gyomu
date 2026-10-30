@@ -40,6 +40,6 @@ fs.writeFileSync(path.join(out,'나래교무_시작안내.txt'),[
   '나래2(EXAONE)는 연구·평가용 이용조건을 따릅니다. 상세 조건은 licenses/models에 있습니다.',
   '모의 벤치 성능은 낮으며 복잡한 업무를 자동 완수한다고 보장하지 않습니다.',
   '자료·대화·출력·캐시 기본 위치: D:\\Codex\\narae-gyomu-data',
-  '최종 상신·결재 승인·공문 실제 발송은 지원하지 않습니다.',
+  '상신·결재는 명시적 요청과 현재 문서·결재선 검증 후 처리합니다. 공문 실제 발송은 지원하지 않습니다.',
 ].join('\r\n'),'utf8');
 console.log(JSON.stringify({built:out,models:readJSON(path.join(out,'models/catalog.json')).models.map(m=>m.id)}));
