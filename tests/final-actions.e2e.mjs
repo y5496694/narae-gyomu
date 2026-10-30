@@ -9,7 +9,7 @@ test('authorized final actions use real native buttons, exact confirmation, chan
   res.setHeader('content-type','text/html;charset=utf-8');
   if(req.method==='POST'){records.push(req.url);res.end('ok');return;}
   if(req.url.includes('retrieveSanctnProgrsDocList.do')){
-   res.end(`<!doctype html><meta charset="utf-8"><h1>문서진행</h1><table><tr><td><input type="checkbox" checked></td><td><a onclick="viewDocument('SYNTHDOC000000000001')">합성 활용계획 QA-002</a></td></tr></table><button onclick="if(confirm('선택한 문서를 회수하시겠습니까?'))fetch('/record?kind=withdraw',{method:'POST'}).then(()=>{window.completed=true})">회수</button>`);return;
+   res.end(`<!doctype html><meta charset="utf-8"><h1>문서진행</h1><table><tr><td><input type="checkbox" checked></td><td><a onclick="viewDocument('SYNTHDOC000000000001','SYNTHUSER00000000001')">합성 활용계획 QA-002</a></td></tr></table><button onclick="if(confirm('선택한 문서를 회수하시겠습니까?'))fetch('/record?kind=withdraw',{method:'POST'}).then(()=>{window.completed=true})">회수</button>`);return;
   }
   const approve=req.url.includes('approve'),label=approve?'결재':'상신';
   const message=req.url.includes('wrong-dialog')?'결재 문서를 삭제하시겠습니까?':label+'하시겠습니까?';

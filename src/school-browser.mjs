@@ -67,7 +67,7 @@ export class SchoolBrowser extends BrowserEngine {
     if (operation === 'withdraw') {
       const selected=await this.scope().evaluate(selectedDocumentsDOM);
       if(!command.expectedDocumentId || selected.length!==1 || !selected[0].text.includes(command.expectedDocument) ||
-          selected[0].documentIds.length!==1 || selected[0].documentIds[0]!==command.expectedDocumentId)
+          !selected[0].documentIds.includes(command.expectedDocumentId))
         throw new Fault('WITHDRAW_TARGET_REQUIRED','문서진행에서 선택한 한 건의 제목과 실제 문서 ID를 대조하세요.');
     }
     const key = JSON.stringify([this.scope().url(), operation, command.expectedDocumentId || command.expectedDocument]);
