@@ -78,9 +78,9 @@ export class SchoolBrowser extends BrowserEngine {
   async snapshot(args = {}) {
     const version = 's' + ++this.serial;
     this.refs.clear();
-    const result = await this.scope().evaluate(({limit, chars, offset, filter, version}) => {
+    const result = await this.scope().evaluate(({limit, chars, offset, filter, version, selector}) => {
       const visible = e => {const s = getComputedStyle(e), r = e.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 0 && r.height > 0;};
-      const nodes = [...document.querySelectorAll('a[href],button,input:not([type=hidden]),textarea,select,[role=button],[role=link],[role=treeitem],[role=tab],[role=menuitem],[role=gridcell],[role=option],[role=combobox],[role=checkbox],[role=radio],[contenteditable=true]')];
+      const nodes = [...document.querySelectorAll(selector || 'a[href],button,input:not([type=hidden]),textarea,select,[role=button],[role=link],[role=treeitem],[role=tab],[role=menuitem],[role=gridcell],[role=option],[role=combobox],[role=checkbox],[role=radio],[class*="tree" i],[contenteditable=true]')];
       const elements = [];
       for (const e of nodes) {
         if (!visible(e)) continue;
@@ -91,7 +91,8 @@ export class SchoolBrowser extends BrowserEngine {
         const ref = `${version}/e${elements.length + 1}`;
         e.setAttribute('data-narae-ref', ref);
         elements.push({ref, role: e.getAttribute('role') || (tag === 'a' ? 'link' : tag === 'input' ? 'textbox' : tag),
-          label, tag, type, disabled: Boolean(e.disabled) || e.getAttribute('aria-disabled') === 'true',
+          label, tag, type, id: e.id || '', classes: e.className?.baseVal ?? String(e.className || ''),
+          disabled: Boolean(e.disabled) || e.getAttribute('aria-disabled') === 'true',
           ...(e.hasAttribute('aria-expanded') ? {expanded: e.getAttribute('aria-expanded') === 'true'} : {}),
           ...(e.hasAttribute('aria-selected') ? {selected: e.getAttribute('aria-selected') === 'true'} : {}),
           ...(tag === 'a' ? {href: e.href} : {}),
@@ -103,7 +104,7 @@ export class SchoolBrowser extends BrowserEngine {
         elements: elements.slice(offset, offset + limit), totalElements: elements.length,
         hasMore: elements.length > offset + limit, nextOffset: offset + limit};
     }, {version, limit: bound(args.limit, 1, 100, 35), chars: bound(args.chars, 100, 12000, 2000),
-      offset: bound(args.offset, 0, 10000, 0), filter: args.filter || ''});
+      offset: bound(args.offset, 0, 10000, 0), filter: args.filter || '', selector: args.selector || ''});
     for (const entry of result.elements) this.refs.set(entry.ref, entry);
     return this.withFinalState({version, frameIndex: this.page.frames().indexOf(this.scope()), ...result, untrusted: true});
   }
