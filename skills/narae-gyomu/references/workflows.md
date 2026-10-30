@@ -23,3 +23,5 @@
 ## WXS
 
 `wxs windows` → 대상 HWND·제목 확인 → inspect/text/attachments → 원본 설정 JSON으로 `wxs.prepare` → 사용자 적용 → 다시 draft-status 확인. 임시저장은 `wxs.save`에서 확인한 이름으로 준비·적용한다. 임시저장을 상신·발송으로 보고하지 않는다.
+
+초안의 실제 결재자·과제카드 후보는 `wxs.options`에 현재 `hwnd`, `expected_title`, `section:approval|task|disclosure`를 전달해 확인한다. `query`와 `offset`·`limit`으로 후보를 끝까지 확인한다. 같은 선택창은 반환된 `dialog_hwnd`로 재사용하며, 결재 후보 조회 후 `close:true`로 변경 없는 기안자 단독 선택창만 닫고 작성 계획을 준비한다. 후보 조회는 결재자를 추가하거나 저장하지 않는다.

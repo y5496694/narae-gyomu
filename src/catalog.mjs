@@ -30,6 +30,7 @@ export const tools = [
     parameters: object({job: {type: 'object'}}, ['job'])},
   {name: 'wxs', label: '공문서 에디터 읽기', description: '실제 WXS의 상태·열린 창·본문·첨부·초안 상태를 원본 CLI로 확인한다. 실제 HWND를 사용한다.',
     parameters: object({operation: enumeration(['doctor','windows','inspect','text','attachments','draft-status']), hwnd: string}, ['operation'])},
+  {name:'wxs.options',label:'기안 후보 조회',description:'확인한 초안의 결재자·과제카드 후보와 공개 설정을 원본 CLI로 조회한다. 사람을 선택하거나 문서를 저장하지 않는다. 같은 선택창을 재사용하며 query·offset·limit으로 후보를 나눠 읽는다. close=true는 관찰한 변경 없는 기안자 단독 결재선 선택창만 닫는다.',parameters:object({hwnd:string,expected_title:string,section:enumeration(['approval','task','disclosure']),dialog_hwnd:string,close:{type:'boolean'},query:string,offset:integer,limit:integer},['hwnd','expected_title','section'])},
   {name: 'wxs.prepare', label: '기안 입력 준비', description: '공개 WXS 설정 JSON을 원본 CLI로 점검해 입력 미리보기를 만든다. 사용자가 미리보기에서 적용하며 최종 상신·발송은 하지 않는다.',
     parameters: object({hwnd: string, config: {type: 'object'}}, ['hwnd','config'])},
   {name: 'wxs.read', label: '공문 한 건 읽기', description: '새 공문은 prepare(expected_title)의 ready:true 후 같은 제목 한 건만 연다. 초기 승인 등으로 이미 열린 작업 소유 공문은 windows의 실제 hwnd·정확한 expected_title로 open을 실행한다. 새 창을 다시 열지 않는다. result(id)로 본문·모든 첨부 저장·closed 상태를 받는다. 인증 대기 창은 보존한다. pending:true면 같은 result로 확인한다.',
