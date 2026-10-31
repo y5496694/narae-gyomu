@@ -10,6 +10,8 @@ const HELP=`나래교무 0.1.0 · 로컬 교무 AI와 네 도구의 공통 CLI
   narae-gyomu models list | activate narae1|narae2|narae3 | stop
   narae-gyomu chat "명령" [--file 절대경로] [--conversation ID] [--json]
   narae-gyomu chat                         대화형 터미널
+  narae-gyomu office agent-status          설치된 나래4 오피스 CLI 상태
+  narae-gyomu office agent JOB.json [--result RESULT.json]
   narae-gyomu tool call TOOL --args '{"key":"value"}' [--file FILE]
   narae-gyomu tool call TOOL --args-file FILE.json [--file FILE]
   narae-gyomu confirm PENDING_ID           미리보기의 실제 적용 (1회)
@@ -76,6 +78,9 @@ async function chat(text,opts) {
   return latest.conversationId;
 }
 try {
+  if(process.argv[2]==='office') {
+    process.exitCode=await import('../src/office-cli.mjs').then(m=>m.runOffice(process.argv.slice(3)));
+  } else {
   const {pos,opts}=options(process.argv.slice(2)),[command,action,name]=pos;
   if(!command || ['help','--help','-h'].includes(command)) console.log(HELP);
   else if(command==='serve') {
@@ -118,5 +123,6 @@ try {
       }
     } else throw new Fault('COMMAND','지원하지 않는 명령입니다.\n'+HELP);
     if(result!==undefined) console.log(JSON.stringify(result,null,2));
+  }
   }
 } catch(e) {console.error(JSON.stringify({ok:false,error:{code:e.code || 'FAILED',message:e.message}}));process.exitCode=1;}
