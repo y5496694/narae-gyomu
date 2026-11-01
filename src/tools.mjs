@@ -183,7 +183,7 @@ export class Tools {
         try{return await portalLogin.login(a,{cfg,browser:this.browser,state:this.portalLoginState,signal,readProfile:portalLogin.loadProfile});}
         catch(error){if(signal?.aborted)throw new Fault('CANCELLED','로그인을 중단했습니다.');return {authenticated:false,complete:false,stage:'runtime_unconfirmed',message:'로그인 경로를 확인하지 못했습니다. 현재 독립 브라우저를 보존합니다.'};}
       }
-      case 'browser': return this.browserCall(a);
+      case 'browser': return this.browserCall(a.action==='upload'?{...a,files:(a.files||[]).map(file=>this.input(file))}:a);
       case 'cbe.search': {
         const result = await this.cbe(['users','search',a.name,'--scope',a.scope || 'auto','--page',String(a.page || 1),'--limit','100'],signal);
         for (const person of result.items || []) this.people.set(person.id, person);

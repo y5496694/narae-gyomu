@@ -2,6 +2,7 @@ import { chromium } from "playwright-core";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { createHash } from "node:crypto";
 import { connectExistingBrowser } from "./existing-browser.mjs";
 export class Fault extends Error {
   constructor(code, message) {
@@ -735,6 +736,19 @@ export class BrowserEngine {
           );
         if (command.part && command.part !== "toggle")
           throw new Fault("INVALID_ARGUMENT", "click part must be toggle");
+        if (
+          command.clickCount !== undefined &&
+          ![1, 2].includes(command.clickCount)
+        )
+          throw new Fault("INVALID_ARGUMENT", "clickCount is one or two");
+        if (
+          command.clickCount === 2 &&
+          !/\.body\.gridrow_\d+\.cell_\d+_\d+(?::text)?$/.test(entry.id || "")
+        )
+          throw new Fault(
+            "GRID_CELL_REQUIRED",
+            "Double click is limited to an observed data-grid cell",
+          );
         let clickTarget = locator;
         if (command.part === "toggle") {
           if (entry.role !== "combobox" || command.method === "dom")
@@ -791,7 +805,9 @@ export class BrowserEngine {
                     element.dispatchEvent(new MouseEvent("mouseup", init));
                     element.click();
                   })
-                : clickTarget.click({ force: command.force === true }),
+                : command.clickCount === 2
+                  ? clickTarget.dblclick({ force: command.force === true })
+                  : clickTarget.click({ force: command.force === true }),
             )
           )
             return { actionPending: true, dialog: this.dialogState() };
@@ -799,6 +815,87 @@ export class BrowserEngine {
           this.invalidate();
           return await this.snapshot(command);
         });
+      }
+      case "upload": {
+        if (this.policy)
+          throw new Fault("READ_ONLY", "Model session cannot upload files");
+        if (
+          !Array.isArray(command.files) ||
+          !command.files.length ||
+          command.files.length > 10
+        )
+          throw new Fault(
+            "FILES_REQUIRED",
+            "Select one to ten explicit local files",
+          );
+        const files = command.files.map((file) => {
+          if (
+            typeof file !== "string" ||
+            !path.isAbsolute(file) ||
+            !fs.statSync(file).isFile()
+          )
+            throw new Fault(
+              "FILE_REQUIRED",
+              "An existing absolute file path is required",
+            );
+          return {
+            path: file,
+            name: path.basename(file),
+            bytes: fs.statSync(file).size,
+            sha256: createHash("sha256")
+              .update(fs.readFileSync(file))
+              .digest("hex"),
+          };
+        });
+        const { entry, locator } = this.ref(command.ref);
+        if (
+          entry.disabled ||
+          !(await locator.isVisible()) ||
+          !(await locator.isEnabled())
+        )
+          throw new Fault(
+            "CONTROL_UNAVAILABLE",
+            "Observe an available upload control",
+          );
+        if (entry.tag === "input" && entry.type === "file")
+          await locator.setInputFiles(files.map((f) => f.path));
+        else {
+          if (!/파일|첨부|찾아보기|browse|upload/i.test(entry.label))
+            throw new Fault(
+              "FILE_CONTROL_REQUIRED",
+              "Observe the actual file attachment control",
+            );
+          const chooser = this.page.waitForEvent("filechooser", {
+            timeout: 12000,
+          });
+          chooser.catch(() => {});
+          await locator.click();
+          const selected = await chooser;
+          if (!selected.isMultiple() && files.length > 1)
+            throw new Fault(
+              "SINGLE_FILE_CONTROL",
+              "This observed control accepts one file",
+            );
+          await selected.setFiles(files.map((f) => f.path));
+        }
+        for (const f of files)
+          if (
+            fs.statSync(f.path).size !== f.bytes ||
+            createHash("sha256")
+              .update(fs.readFileSync(f.path))
+              .digest("hex") !== f.sha256
+          )
+            throw new Fault(
+              "UPLOAD_SOURCE_CHANGED",
+              "The local source changed during file selection",
+            );
+        this.invalidate();
+        return {
+          selected: true,
+          files: files.map(({ path, ...f }) => f),
+          serverVerified: false,
+          ...(await this.snapshot(command)),
+        };
       }
       case "fill": {
         if (this.policy)
