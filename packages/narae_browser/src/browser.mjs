@@ -2,7 +2,7 @@ import { chromium } from "playwright-core";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { connectExistingBrowser } from "./existing-browser.mjs";
 export class Fault extends Error {
   constructor(code, message) {
@@ -91,7 +91,7 @@ export class BrowserEngine {
     this.context = await this.browser.newContext({
       viewport: { width: 1280, height: 900 },
       locale: "ko-KR",
-      acceptDownloads: false,
+      acceptDownloads: true,
       serviceWorkers: "block",
     });
     this.context.setDefaultTimeout(12000);
@@ -816,6 +816,57 @@ export class BrowserEngine {
           return await this.snapshot(command);
         });
       }
+      case "download": {
+        if (this.policy)
+          throw new Fault("READ_ONLY", "Model session cannot download files");
+        if (
+          typeof command.path !== "string" ||
+          !path.isAbsolute(command.path) ||
+          fs.existsSync(command.path)
+        )
+          throw new Fault(
+            "NEW_DOWNLOAD_PATH_REQUIRED",
+            "Select a new absolute output path",
+          );
+        const { entry, locator } = this.ref(command.ref);
+        if (entry.disabled || !/파일|다운로드|download/i.test(entry.label))
+          throw new Fault(
+            "DOWNLOAD_CONTROL_REQUIRED",
+            "Observe the actual attachment download control",
+          );
+        fs.mkdirSync(path.dirname(command.path), { recursive: true });
+        const temp = path.join(
+          path.dirname(command.path),
+          ".download-" + randomUUID() + ".tmp",
+        );
+        const event = this.page.waitForEvent("download", { timeout: 20000 });
+        event.catch(() => {});
+        await locator.click();
+        const download = await event;
+        try {
+          await download.saveAs(temp);
+          const bytes = fs.statSync(temp).size,
+            sha256 = createHash("sha256")
+              .update(fs.readFileSync(temp))
+              .digest("hex");
+          fs.copyFileSync(temp, command.path, fs.constants.COPYFILE_EXCL);
+          const verified = command.expectedSha256
+            ? sha256 === command.expectedSha256
+            : null;
+          return {
+            downloaded: true,
+            path: command.path,
+            name: download.suggestedFilename(),
+            bytes,
+            sha256,
+            verified,
+            source: "observed native browser download",
+          };
+        } finally {
+          if (fs.existsSync(temp)) fs.unlinkSync(temp);
+          await download.delete().catch(() => {});
+        }
+      }
       case "upload": {
         if (this.policy)
           throw new Fault("READ_ONLY", "Model session cannot upload files");
@@ -896,6 +947,23 @@ export class BrowserEngine {
           serverVerified: false,
           ...(await this.snapshot(command)),
         };
+      }
+      case "type": {
+        if (this.policy)
+          throw new Fault("READ_ONLY", "Model session cannot type into forms");
+        if (typeof command.text !== "string" || command.text.length > 20000)
+          throw new Fault("INVALID_ARGUMENT", "text string max 20000 required");
+        const { locator } = this.ref(command.ref);
+        await locator.click();
+        await locator.press("ControlOrMeta+a");
+        await locator.press("Backspace");
+        const parts = command.text.split("\n");
+        for (let i = 0; i < parts.length; i++) {
+          if (i) await locator.press("Enter");
+          await locator.pressSequentially(parts[i], { delay: 1 });
+        }
+        this.invalidate();
+        return { typed: true, refresh: "snapshot" };
       }
       case "fill": {
         if (this.policy)
