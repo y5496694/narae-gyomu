@@ -494,7 +494,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "5f888915f5129deba250fbc325154885b0684fa7",
+      "commit": "cd932d830baceb0f9e4291f5d78d2dada0d50d30",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -515,7 +515,7 @@
         "skills/narae-gyomu-edufine/references/recalled-cleanup.md": "98a01fa6e3312b565584c6edae78d340a09b984f2c773bd9afb66eae05080d7c",
         "skills/narae-gyomu-edufine/references/school-accounting.md": "0dbbe4e293ac7bcd51262593b8d236a984bd0387b5a0fbc524d14f53402fd0fa",
         "skills/narae-gyomu-edufine/references/wxs-cli.md": "755376fb99df177d89919a9a084993c647ca60de7d9ac6eb537a6a25f066ffd1",
-        "skills/narae-gyomu-edufine/scripts/requisition-draft.cjs": "f5609684f592b78b96a545a5f76e8a5a593278c5a7ec5e8a7fb0f5a9bbda8cbc",
+        "skills/narae-gyomu-edufine/scripts/requisition-draft.cjs": "422738e86f9e12783984cf9ab794d25ea45ebcba0b5f04f80235976057bf456d",
         "skills/narae-gyomu-edufine/scripts/school-accounting.cjs": "6c4f93d6cb7d02a71ace30f1e7dadfa5784fbf3d13d73f147e065b8dabf22324",
         "skills/narae-gyomu-edufine/SKILL.md": "edf7bf7dce2faed1cdf4f1aab40e76fba0cf723d02a65912be1ca818c2f20de5",
         "skills/narae-gyomu-neis/agents/openai.yaml": "a958e1cc2f284035ab49cd44185030da56f25a1cb4ab584dd20cd4b7a469d05e",
