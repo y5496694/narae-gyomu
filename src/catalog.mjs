@@ -1,3 +1,5 @@
+import {createRequire} from 'node:module';
+const {tool:requisitionTool}=createRequire(import.meta.url)('../packages/narae_gyomoo_portal/skills/narae-gyomu-edufine/scripts/school-accounting.cjs');
 const string = {type: 'string'}, strings = {type: 'array', items: string}, integer = {type: 'integer'};
 const enumeration = values => ({type: 'string', enum: values});
 export const object = (properties = {}, required = []) => ({type: 'object', properties, required, additionalProperties: false});
@@ -11,6 +13,7 @@ export const wxsConfig=object({expected_title:string,title:string,body:string,bo
   approver:object({name:string,id:string},['name']),recipient:object({search:string,name:string},['search','name']),
   auto_send:{type:'boolean',enum:[true]}},['expected_title','title']);
 export const tools = [
+  requisitionTool,
   {name: 'system.status', label: '연결 상태', description: '선택 AI, 네 도구 설치 경로, 출력 폴더와 실행 환경을 확인한다.', parameters: object()},
   {name: 'skill.read', label: '업무 절차', description: '작업 전에 해당 영역의 절차와 한계를 읽는다. 긴 문서는 offset으로 이어 읽는다.',
     parameters: object({area: enumeration(['overview', 'portal', 'neis', 'edufine', 'wxs', 'hangul', 'hangul-jobs', 'cbe']), document: string, offset: integer}, ['area'])},
@@ -59,6 +62,7 @@ export const tools = [
 ];
 export function forRequest(text, attached = []) {
   const names = new Set(['system.status','skill.read','files.list']);
+  if (/품의|학교\s*회계/.test(text)) names.add('edufine.requisition');
   if (attached.length || /hwp|한글|문서.*(?:만들|작성|수정|읽)|보고서/i.test(text))
     tools.filter(t => t.name.startsWith('hangul.')).forEach(t => names.add(t.name));
   if (/메신저|쪽지|대화|교직원.*연락|CBE/i.test(text))

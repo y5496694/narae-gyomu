@@ -14,6 +14,7 @@ const hangulRoot = path.join(APP, 'packages/Narae_hangul_office/skills/narae-han
 const officeRoot = () => process.env.NARAE_OFFICE_ROOT || readJSON(path.join(process.env.CODEX_HOME||path.join(process.env.USERPROFILE||'.','.codex'),'skills/narae-hangul-office/runtime.json'),{}).officeRoot || path.join(process.env.LOCALAPPDATA||'.','Programs/NaraeHangulOffice');
 const portalRoot = path.join(APP, 'packages/narae_gyomoo_portal/skills');
 const portalLogin = createRequire(import.meta.url)(path.join(portalRoot,'narae-gyomu-work-portal/scripts/portal-login.cjs'));
+const {SchoolAccounting}=createRequire(import.meta.url)(path.join(portalRoot,'narae-gyomu-edufine/scripts/school-accounting.cjs'));
 const cbeEntry = path.join(APP, 'packages/CBE_CLI/cli.mjs');
 const wxsEntry = path.join(portalRoot, 'wxs-cli/scripts/wxs_cli.py');
 const skillPaths = {
@@ -134,6 +135,10 @@ export class Tools {
     if (signal?.aborted) throw new Fault('CANCELLED', '작업을 중단했습니다.');
     if (!a || typeof a !== 'object' || Array.isArray(a)) throw new Fault('ARGUMENTS', '인자는 JSON 객체로 지정하세요.');
     switch (name) {
+      case 'edufine.requisition': {
+        this.accounting ||= new SchoolAccounting({browser:args=>this.browserCall(args)});
+        return this.accounting.execute(a,signal);
+      }
       case 'system.status': {
         let browser;
         try {browser = browserPath();} catch {browser = null;}
