@@ -660,6 +660,31 @@ export class BrowserEngine {
           return {
             tag: element.tagName.toLowerCase(),
             attributes,
+            ...(element.getAttribute("role") === "combobox"
+              ? {
+                  controls: [...element.querySelectorAll("[id],button,[role]")]
+                    .slice(0, 30)
+                    .map((e) => {
+                      const rect = e.getBoundingClientRect(),
+                        style = getComputedStyle(e);
+                      return {
+                        tag: e.tagName.toLowerCase(),
+                        id: e.id || "",
+                        role: e.getAttribute("role") || "",
+                        className: String(e.className || "").slice(0, 160),
+                        ariaHidden: e.getAttribute("aria-hidden"),
+                        visible:
+                          rect.width > 0 &&
+                          rect.height > 0 &&
+                          style.display !== "none" &&
+                          style.visibility !== "hidden",
+                        disabled:
+                          Boolean(e.disabled) ||
+                          e.getAttribute("aria-disabled") === "true",
+                      };
+                    }),
+                }
+              : {}),
             ...(element.tagName === "FORM"
               ? {
                   fields: [...element.elements].slice(0, 100).map((e) => ({
@@ -708,6 +733,29 @@ export class BrowserEngine {
             "INVALID_ARGUMENT",
             "click method must be mouse or dom",
           );
+        if (command.part && command.part !== "toggle")
+          throw new Fault("INVALID_ARGUMENT", "click part must be toggle");
+        let clickTarget = locator;
+        if (command.part === "toggle") {
+          if (entry.role !== "combobox" || command.method === "dom")
+            throw new Fault(
+              "COMBOBOX_REQUIRED",
+              "toggle은 관찰한 combobox의 실제 펼침 버튼에만 사용합니다.",
+            );
+          const candidates = locator.locator(
+              '[id$=".dropbutton"], [id$=".combobutton"], [class~="dropbutton"]',
+            ),
+            visible = [];
+          for (let i = 0; i < (await candidates.count()); i++)
+            if (await candidates.nth(i).isVisible())
+              visible.push(candidates.nth(i));
+          if (visible.length !== 1 || !(await visible[0].isEnabled()))
+            throw new Fault(
+              "COMBOBOX_TOGGLE_UNCONFIRMED",
+              "보이고 활성화된 펼침 버튼을 유일하게 확인하지 못했습니다.",
+            );
+          clickTarget = visible[0];
+        }
         if (this.policy && command.method === "dom")
           throw new Fault("READ_ONLY", "Agent cannot dispatch DOM clicks");
         if (
@@ -743,7 +791,7 @@ export class BrowserEngine {
                     element.dispatchEvent(new MouseEvent("mouseup", init));
                     element.click();
                   })
-                : locator.click({ force: command.force === true }),
+                : clickTarget.click({ force: command.force === true }),
             )
           )
             return { actionPending: true, dialog: this.dialogState() };

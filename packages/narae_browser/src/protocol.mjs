@@ -45,6 +45,7 @@ export function actionFromArgs(name, pos, flags) {
   )
     c.ref = required(0, "ref");
   if (name === "fill") c.text = required(1, "text");
+  if (name === "click" && flags.part) c.part = flags.part;
   if (name === "select") c.value = required(1, "value");
   if (name === "press") {
     c.key = required(0, "key");
@@ -156,7 +157,12 @@ export const schema = {
       ref: "s1/e1",
       note: "Read bounded element attributes and form fields; secret values are redacted",
     },
-    click: { ref: "s1/e1", force: false, method: "mouse (default) or dom" },
+    click: {
+      ref: "s1/e1",
+      force: false,
+      method: "mouse (default) or dom",
+      part: "optional toggle for a uniquely observed combobox dropdown",
+    },
     hover: { ref: "s1/e1", force: false },
     fill: { ref: "s1/e2", text: "value" },
     select: { ref: "s1/e3", value: "option" },
