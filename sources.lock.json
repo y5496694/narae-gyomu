@@ -497,7 +497,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "f739e547b433d17ede3d2a39005c0cdc1f0aafff",
+      "commit": "b6d01828cd8c28d842c40969120f8fec3e64ad5c",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -531,7 +531,7 @@
         "skills/narae-gyomu-work-portal/references/portal.json": "f1e66e41e0df414c6abebc8388e209ed6513e7c70a4e135c3699f6466b34cf17",
         "skills/narae-gyomu-work-portal/references/regions.md": "dd594e7153662c6d246ff0ab13a98bdcf4eabfb172a79f638463bc6758f05088",
         "skills/narae-gyomu-work-portal/scripts/certificate-profile.ps1": "60f2642ae6f6cfddc139b509707637b7dac17fc6a3d9925416a85d56e9f7ec2c",
-        "skills/narae-gyomu-work-portal/scripts/portal-login.cjs": "e75abbb1b0ecd4b856b1bab915e6f7be9638bd4fad45a7e3af8c58cb8862f293",
+        "skills/narae-gyomu-work-portal/scripts/portal-login.cjs": "4f830403629e2054d64b3e8ac0a4e8f8d1ea3f33f97c8583859e26bd1787e3f2",
         "skills/narae-gyomu-work-portal/scripts/regions.cjs": "cdb708392740ae2ed6fed75acd5f866b25292772b22d7d626a008903baae5164",
         "skills/narae-gyomu-work-portal/SKILL.md": "d08aba20081d92049a5b23a634b5fdc17c051e96fae6c415063377ab182bff69",
         "skills/wxs-cli/agents/openai.yaml": "bc6cb38ddb9551325b68238ab76cc2905a08f1964fc238243d5b5e05e3975f58",
@@ -564,7 +564,7 @@
         "skills/wxs-cli/scripts/wxs_runtime.py": "21d87b98d5f70fe8ed099a140817a7977ead713b9202d378214b9fd02505b4fe",
         "skills/wxs-cli/scripts/wxs_startup.py": "8d8696f62518baab9210a8299f806b1901dd99c95ded1f7182c2859c81c05be5",
         "skills/wxs-cli/SKILL.md": "7c4c8e9bc336ed06e268684fef49be7cbcb4c000993df9f102c778c8bdbca640",
-        "tests/portal-login.test.cjs": "845fbf1d290bfe335c3ebfd3a8580af6d99b08970d2ab6e4573460d71774f9b0",
+        "tests/portal-login.test.cjs": "6a1d790f905573d1399792bb7791c55edfa4dd17928420ea8b8ff8dd2c59fb62",
         "tests/regions.test.cjs": "c8ea7a7f904cd1a2bde937618002e9d541af0c2e2755ec4aecd36d71780ff086",
         "tests/test_absence.py": "986da32c160ed4d7bee94159bbf6b1f7f1bb79f241f1a0252f626ff8f296f784",
         "tests/test_actions.cjs": "94973881d286adf54e99b165585a82e1c4021533bff35a161888edfba2405300",
