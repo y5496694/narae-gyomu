@@ -493,7 +493,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "bf12117a066086bb7173fff766ab62f6198780a1",
+      "commit": "bf0a91512f82e817a06bd1f9beee6b88e393079e",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -522,7 +522,7 @@
         "skills/narae-gyomu-work-portal/references/login.md": "e25e9a73d16c0f1e3551f1b9bbfa978d459db97c5d3eebe65229d1b1f7869770",
         "skills/narae-gyomu-work-portal/references/portal.json": "f1e66e41e0df414c6abebc8388e209ed6513e7c70a4e135c3699f6466b34cf17",
         "skills/narae-gyomu-work-portal/scripts/certificate-profile.ps1": "60f2642ae6f6cfddc139b509707637b7dac17fc6a3d9925416a85d56e9f7ec2c",
-        "skills/narae-gyomu-work-portal/scripts/portal-login.cjs": "b24a160d153225014c2b78ef6c408dff6dfa2d13da355672cd975ab9886dd2ef",
+        "skills/narae-gyomu-work-portal/scripts/portal-login.cjs": "8eb1fc2a344778f0a2664593d554e9d594bd429d77f57e5c5eb99e150dcc3790",
         "skills/narae-gyomu-work-portal/SKILL.md": "acabf13155a5cd978e462b87200076e6bd22f5eaff1cd74a701cec5cc5f3ec4c",
         "skills/wxs-cli/agents/openai.yaml": "bc6cb38ddb9551325b68238ab76cc2905a08f1964fc238243d5b5e05e3975f58",
         "skills/wxs-cli/references/architecture.md": "3dc49f15693856a24f6a9936c5163d70ae77fac9dad19fd0f8c89bc7bbd7e419",
