@@ -493,7 +493,7 @@
     {
       "name": "narae_gyomoo_portal",
       "repository": "https://github.com/y5496694/narae_gyomoo_portal",
-      "commit": "afe57dea00f56a2dc83e4709353efb9a90548713",
+      "commit": "aa7009fec419d3b70e932feecefab2aff7fe2f16",
       "files": {
         ".gitattributes": "c4d8df0f5314d4a4be874ce7a929543f353d5ae841174fae175ef31ecf9c5d50",
         ".github/workflows/final-actions.yml": "b69a8fe6120e13474881d501df2ad02bb8b8518cf3ada2b507e50b1e42d4ff0d",
@@ -522,7 +522,7 @@
         "skills/narae-gyomu-work-portal/references/login.md": "e25e9a73d16c0f1e3551f1b9bbfa978d459db97c5d3eebe65229d1b1f7869770",
         "skills/narae-gyomu-work-portal/references/portal.json": "f1e66e41e0df414c6abebc8388e209ed6513e7c70a4e135c3699f6466b34cf17",
         "skills/narae-gyomu-work-portal/scripts/certificate-profile.ps1": "60f2642ae6f6cfddc139b509707637b7dac17fc6a3d9925416a85d56e9f7ec2c",
-        "skills/narae-gyomu-work-portal/scripts/portal-login.cjs": "788a115c9f825f70f20e201f95ca1b9844f4b5afa88b4153720afb195c8e5546",
+        "skills/narae-gyomu-work-portal/scripts/portal-login.cjs": "6200d618a6f90f2d58205c1dbd4d58ac9f971c9ef927bb12199af96fd9f922d8",
         "skills/narae-gyomu-work-portal/SKILL.md": "acabf13155a5cd978e462b87200076e6bd22f5eaff1cd74a701cec5cc5f3ec4c",
         "skills/wxs-cli/agents/openai.yaml": "bc6cb38ddb9551325b68238ab76cc2905a08f1964fc238243d5b5e05e3975f58",
         "skills/wxs-cli/references/architecture.md": "3dc49f15693856a24f6a9936c5163d70ae77fac9dad19fd0f8c89bc7bbd7e419",
@@ -553,7 +553,7 @@
         "skills/wxs-cli/scripts/wxs_route_notice.py": "f9118ea6051bfa2c0f167f4f73b9a86c323a1ac6e61b45c13064e9546a04ee2b",
         "skills/wxs-cli/scripts/wxs_runtime.py": "21d87b98d5f70fe8ed099a140817a7977ead713b9202d378214b9fd02505b4fe",
         "skills/wxs-cli/SKILL.md": "7c4c8e9bc336ed06e268684fef49be7cbcb4c000993df9f102c778c8bdbca640",
-        "tests/portal-login.test.cjs": "4d1a1cfd08082e7b52c7b648edfbd478c7fdbcbcfb49b12c662bec074687c754",
+        "tests/portal-login.test.cjs": "3bd61441b5e80ff0cb59f851c98d04c0b7b709ca3ad0266d2d2ad0005625d595",
         "tests/test_absence.py": "986da32c160ed4d7bee94159bbf6b1f7f1bb79f241f1a0252f626ff8f296f784",
         "tests/test_actions.cjs": "94973881d286adf54e99b165585a82e1c4021533bff35a161888edfba2405300",
         "tests/test_attachment_reader.py": "1c567d17d3cac238fcd9ad15dbe159d98f5f44b565dd2883be3381b3109e1361",
