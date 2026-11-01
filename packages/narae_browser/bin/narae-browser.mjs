@@ -19,7 +19,7 @@ const help = `나래 브라우저 / narae-browser 0.2.0
   narae-browser snapshot [--selector CSS] [--filter TEXT] [--offset 0] [--limit 35] [--chars 1600]
   narae-browser inspect REF   (bounded DOM attributes/form state, secrets redacted)
   narae-browser click REF [--force] [--method mouse|dom] | hover REF [--force]
-  narae-browser fill REF TEXT | select REF VALUE | check REF | uncheck REF | press KEY
+  narae-browser fill REF TEXT | type REF TEXT | select REF VALUE | check REF | uncheck REF | press KEY
   narae-browser upload REF ABSOLUTE_FILE [ABSOLUTE_FILE...]
   narae-browser download REF NEW_OUTPUT_FILE [--expected-sha256 HASH]
   narae-browser read [--selector CSS] [--chars 5000] [--offset 0]

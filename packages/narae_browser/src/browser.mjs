@@ -954,6 +954,16 @@ export class BrowserEngine {
         if (typeof command.text !== "string" || command.text.length > 20000)
           throw new Fault("INVALID_ARGUMENT", "text string max 20000 required");
         const { locator } = this.ref(command.ref);
+        if (
+          /[\r\n]/.test(command.text) &&
+          !(await locator.evaluate(
+            (e) => e.tagName === "TEXTAREA" || e.isContentEditable,
+          ))
+        )
+          throw new Fault(
+            "MULTILINE_CONTROL_REQUIRED",
+            "Newlines require an observed multiline editor",
+          );
         await locator.click();
         await locator.press("ControlOrMeta+a");
         await locator.press("Backspace");
